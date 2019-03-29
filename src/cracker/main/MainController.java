@@ -30,6 +30,7 @@ public class MainController implements Initializable {
 
     private Set<LoadedHash> loadedHashes = new HashSet<>();
     private Map<String,AnalyzedHash> analyzedHashesMap = new HashMap<>();
+    private Set<CrackedHash> crackedHashes = new HashSet<>();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -54,6 +55,14 @@ public class MainController implements Initializable {
 
     ////////////////////////////////////////////MENU////////////////////////////////////////////////////////////////////
     // menu buttons on top of window
+
+    @FXML private void btnSaveProject(){
+
+    }
+
+    @FXML private void btwOpenProject(){
+
+    }
 
     @FXML private void btnExit(){
         isCracking = false;
@@ -368,6 +377,8 @@ public class MainController implements Initializable {
                         if(analyzedHashesMap.containsKey(hexString)){
                             CrackedHash ch = new CrackedHash(hexString,password);
 
+                            crackedHashes.add(ch);
+
                             Platform.runLater(() -> tvCrackedHashes.getItems().add(ch));
                         }
 
@@ -443,6 +454,8 @@ public class MainController implements Initializable {
 
                         if (analyzedHashesMap.containsKey(array[0])) {
                             CrackedHash ch = new CrackedHash(array[0], array[1]);
+
+                            crackedHashes.add(ch);
 
                             Platform.runLater(() -> tvCrackedHashes.getItems().add(ch));
                         }
