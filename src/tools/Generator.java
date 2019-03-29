@@ -1,6 +1,6 @@
-package cracker.tools;
+package tools;
 
-import cracker.main.MainController;
+import main.MainController;
 
 public class Generator {
 

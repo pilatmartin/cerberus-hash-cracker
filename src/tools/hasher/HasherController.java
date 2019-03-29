@@ -1,19 +1,13 @@
-package cracker.tools.hasher;
+package tools.hasher;
 
-import cracker.tools.Tools;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import tools.Tools;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import java.net.URL;
-import java.security.MessageDigest;
-import java.security.Security;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 
 public class HasherController implements Initializable {

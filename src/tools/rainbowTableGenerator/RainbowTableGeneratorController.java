@@ -1,6 +1,6 @@
-package cracker.tools.rainbowTableGenerator;
+package tools.rainbowTableGenerator;
 
-import cracker.tools.Tools;
+import tools.Tools;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

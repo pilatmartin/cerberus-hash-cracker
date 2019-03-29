@@ -1,6 +1,6 @@
-package cracker.activation;
+package activation;
 
-import cracker.main.MainController;
+import main.MainController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;

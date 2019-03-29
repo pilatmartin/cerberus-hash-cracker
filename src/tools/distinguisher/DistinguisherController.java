@@ -1,6 +1,6 @@
-package cracker.tools.distinguisher;
+package tools.distinguisher;
 
-import cracker.tools.Tools;
+import tools.Tools;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;

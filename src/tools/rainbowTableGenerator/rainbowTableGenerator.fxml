@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane prefHeight="180.0" prefWidth="520.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cracker.tools.rainbowTableGenerator.RainbowTableGeneratorController">
+<BorderPane prefHeight="180.0" prefWidth="520.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tools.rainbowTableGenerator.RainbowTableGeneratorController">
    <center>
       <AnchorPane prefHeight="0.0" prefWidth="0.0" BorderPane.alignment="CENTER">
          <children>

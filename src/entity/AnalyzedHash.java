@@ -1,4 +1,4 @@
-package cracker.entity;
+package entity;
 
 public class AnalyzedHash extends LoadedHash {
 

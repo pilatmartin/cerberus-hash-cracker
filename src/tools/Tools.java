@@ -1,4 +1,4 @@
-package cracker.tools;
+package tools;
 
 import java.io.BufferedInputStream;
 import java.io.File;

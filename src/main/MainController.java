@@ -1,12 +1,10 @@
-package cracker.main;
+package main;
 
-import cracker.entity.AnalyzedHash;
-import cracker.entity.CrackedHash;
-import cracker.entity.LoadedHash;
-import cracker.tools.Generator;
-import cracker.tools.Tools;
+import entity.AnalyzedHash;
+import entity.CrackedHash;
+import entity.LoadedHash;
+import tools.Tools;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
