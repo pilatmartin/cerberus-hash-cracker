@@ -15,6 +15,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -56,9 +57,10 @@ public class MainController implements Initializable {
 
     @FXML private void btnSaveProject(){
 
+
     }
 
-    @FXML private void btwOpenProject(){
+    @FXML private void btnOpenProject(){
 
     }
 
@@ -184,10 +186,11 @@ public class MainController implements Initializable {
     @FXML private TableColumn<AnalyzedHash,String> tcAlgorithm;
     @FXML private TableColumn<AnalyzedHash,String> tcHash;
 
-    static long counterAnalyze = 0;
+    static long counterOfAnalyzedHashes = 0;
 
     @FXML private  void analyzeLoadedHashes(){
-        counterAnalyze = 0;
+
+        counterOfAnalyzedHashes = 0;
 
         analyzedHashesMap.clear();
         twAnalyzedHashes.getItems().clear();
@@ -202,8 +205,8 @@ public class MainController implements Initializable {
             analyzedHashesMap.put(hexString,ah);
             twAnalyzedHashes.getItems().add(ah);
 
-            counterAnalyze++;
-            Platform.runLater(() -> lAnalyzedHashesSize.setText("Analyzed hashes: "+counterAnalyze));
+            counterOfAnalyzedHashes++;
+            Platform.runLater(() -> lAnalyzedHashesSize.setText("Analyzed hashes: "+counterOfAnalyzedHashes));
         }
     }
 
