@@ -27,7 +27,7 @@
             <items>
                 <MenuItem mnemonicParsing="false" onAction="#selectHashFile" text="Select hash file..." />
                 <MenuItem mnemonicParsing="false" onAction="#selectWordlist" text="Select word list..." />
-                <MenuItem mnemonicParsing="false" text="Exit" />
+                <MenuItem mnemonicParsing="false" onAction="#btnExit" text="Exit" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Tools">

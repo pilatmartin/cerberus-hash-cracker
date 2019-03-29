@@ -55,6 +55,11 @@ public class MainController implements Initializable {
     ////////////////////////////////////////////MENU////////////////////////////////////////////////////////////////////
     // menu buttons on top of window
 
+    @FXML private void btnExit(){
+        isCracking = false;
+        System.exit(0);
+    }
+
     @FXML private void btnOpenHasher() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../tools/hasher/hasher.fxml"));
