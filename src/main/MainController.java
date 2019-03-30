@@ -3,6 +3,7 @@ package main;
 import entity.AnalyzedHash;
 import entity.CrackedHash;
 import entity.LoadedHash;
+import javafx.collections.ObservableList;
 import tools.Tools;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -15,7 +16,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import javax.swing.*;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -28,7 +28,7 @@ public class MainController implements Initializable {
     }
 
     private Set<LoadedHash> loadedHashes = new HashSet<>();
-    private Map<String,AnalyzedHash> analyzedHashesMap = new HashMap<>();
+    private Map<String,AnalyzedHash> analyzedHashes = new HashMap<>();
     private Set<CrackedHash> crackedHashes = new HashSet<>();
 
     @Override
@@ -47,8 +47,7 @@ public class MainController implements Initializable {
 
         // fill choice box on 'start crack' tab with values
         String[] algorithms = {"MD5","SHA","SHA-224","SHA-256","SHA-384","SHA-512"};
-        for (String alg: algorithms)
-            cbAttackAlgorithm.getItems().add(alg);
+        cbAttackAlgorithm.getItems().addAll(algorithms);
         cbAttackAlgorithm.setValue(cbAttackAlgorithm.getItems().get(0));
     }
 
@@ -56,11 +55,98 @@ public class MainController implements Initializable {
     // menu buttons on top of window
 
     @FXML private void btnSaveProject(){
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("lastproject.cerb"));
 
+            for (LoadedHash loadedHash : loadedHashes) {
+                writer.write(loadedHash.getHexString()+"\n");
+            }
 
+            writer.write("---END OF LOADED HASHES---\n");
+            writer.write("--------------------------\n");
+
+            for (AnalyzedHash analyzedHash : analyzedHashes.values()) {
+                writer.write(analyzedHash.getHexString()+"\n"+analyzedHash.getAlgorithm()+"\n");
+            }
+
+            writer.write("---END OF ANALYZED HASHES---\n");
+            writer.write("----------------------------\n");
+
+            for (CrackedHash crackedHash : crackedHashes) {
+                writer.write(crackedHash.getHexString()+"\n"+crackedHash.getPassword()+"\n");
+            }
+
+            writer.write("---END OF CRACKED HASHES---\n");
+            writer.write("---------------------------\n");
+
+            writer.close();
+            System.out.println("Saved");
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     @FXML private void btnOpenProject(){
+        FileChooser fc = new FileChooser();
+        File file = fc.showOpenDialog(null);
+
+        if(file == null) return;
+
+        Thread thread = new Thread(() -> {
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(file));
+
+                int stage = 0;
+                boolean check = true;
+                String hash;
+                while (check) {
+
+                    switch (stage){
+                        case 0:
+                            hash = br.readLine();
+                            if (hash.equals("---END OF LOADED HASHES---")){
+                                hash = br.readLine();
+                                stage++;
+                                continue;
+                            }
+                            loadedHashes.add(new LoadedHash(hash));
+                            break;
+                        case 1:
+                            hash = br.readLine();
+                            String algorithm = br.readLine();
+                            if (hash.equals("---END OF ANALYZED HASHES---")){
+                                stage++;
+                                continue;
+                            }
+                            analyzedHashes.put(hash, new AnalyzedHash(hash,algorithm));
+                            break;
+                        case 2:
+                            hash = br.readLine();
+                            String password = br.readLine();
+                            if (hash.equals("---END OF CRACKED HASHES---")){
+                                stage++;
+                                continue;
+                            }
+                            crackedHashes.add(new CrackedHash(hash,password));
+                            break;
+                        case 3:
+                            check = false;
+                            break;
+                    }
+                }
+
+                br.close();
+
+                Platform.runLater(() -> {
+                    updateAnalyzedHashesTableView();
+                    updateLoadedHashesListView();
+                    updateCrackedHashesTableView();
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        thread.start();
 
     }
 
@@ -70,52 +156,28 @@ public class MainController implements Initializable {
     }
 
     @FXML private void btnOpenHasher() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../tools/hasher/hasher.fxml"));
-
-            Parent root = loader.load();
-            Scene scene = new Scene(root);
-            Stage stage = new Stage();
-
-            stage.setScene(scene);
-            stage.setTitle("Hasher");
-            stage.setResizable(false);
-            stage.show();
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        openToolWindow("../tools/hasher/hasher.fxml","Hasher");
     }
 
     @FXML private void btnOpenDistinguisher() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../tools/distinguisher/distinguisher.fxml"));
-
-            Parent root = loader.load();
-            Scene scene = new Scene(root);
-            Stage stage = new Stage();
-
-            stage.setScene(scene);
-            stage.setTitle("LoadedHash Distinguisher");
-            stage.setResizable(false);
-            stage.show();
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        openToolWindow("../tools/distinguisher/distinguisher.fxml","Hash Distinguisher");
     }
 
     @FXML private void btnOpenRainbowTableGenerator() {
+        openToolWindow("../tools/rainbowTableGenerator/rainbowTableGenerator.fxml","Rainbow-Table Generator");
+    }
+
+    private void openToolWindow(String fxml, String title) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../tools/rainbowTableGenerator/rainbowTableGenerator.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
 
             Parent root = loader.load();
             Scene scene = new Scene(root);
             Stage stage = new Stage();
 
             stage.setScene(scene);
+            stage.setTitle(title);
             stage.setResizable(false);
-            stage.setTitle("Rainbow-Table Generator");
             stage.show();
 
         } catch (IOException ex) {
@@ -135,6 +197,8 @@ public class MainController implements Initializable {
         FileChooser fc = new FileChooser();
         File file = fc.showOpenDialog(null);
 
+        if(file == null) return;
+
         Thread thread = new Thread(() -> {
             try {
                 BufferedReader br = new BufferedReader(new FileReader(file));
@@ -143,9 +207,9 @@ public class MainController implements Initializable {
                 while ((hash = br.readLine()) != null)
                     loadedHashes.add(new LoadedHash(hash));
 
-                Platform.runLater(() -> updateHashFile());
+                Platform.runLater(this::updateLoadedHashesListView);
             } catch (Exception e) {
-                System.out.println("error while loading hashes: " + e);
+                e.printStackTrace();
             }
         });
         thread.start();
@@ -154,7 +218,7 @@ public class MainController implements Initializable {
     // stlacenie tlacitka 'clear hashes'
     @FXML private void clearHashes() {
         loadedHashes = new HashSet<>();
-        updateHashFile();
+        updateLoadedHashesListView();
     }
 
     // stlacenie tlacitka 'add hashes'
@@ -168,12 +232,12 @@ public class MainController implements Initializable {
             tfAddHash.setPromptText("hash must be even number");
         }else{
             loadedHashes.add(new LoadedHash(s));
-            updateHashFile();
+            updateLoadedHashesListView();
         }
     }
 
     // function called if we want to update list view
-    public void updateHashFile(){
+    public void updateLoadedHashesListView(){
         lvLoadedHashes.getItems().clear();
         lvLoadedHashes.getItems().addAll(loadedHashes);
         lHashfileSize.setText("Hashes loaded: " + loadedHashes.size());
@@ -186,13 +250,13 @@ public class MainController implements Initializable {
     @FXML private TableColumn<AnalyzedHash,String> tcAlgorithm;
     @FXML private TableColumn<AnalyzedHash,String> tcHash;
 
-    static long counterOfAnalyzedHashes = 0;
+    private static long counterOfAnalyzedHashes = 0;
 
     @FXML private  void analyzeLoadedHashes(){
 
         counterOfAnalyzedHashes = 0;
 
-        analyzedHashesMap.clear();
+        analyzedHashes.clear();
         twAnalyzedHashes.getItems().clear();
 
         for(LoadedHash lh: loadedHashes){
@@ -202,12 +266,21 @@ public class MainController implements Initializable {
 
             AnalyzedHash ah = new AnalyzedHash(hexString,algorithm);
 
-            analyzedHashesMap.put(hexString,ah);
-            twAnalyzedHashes.getItems().add(ah);
+            analyzedHashes.put(hexString,ah);
 
             counterOfAnalyzedHashes++;
-            Platform.runLater(() -> lAnalyzedHashesSize.setText("Analyzed hashes: "+counterOfAnalyzedHashes));
         }
+        updateAnalyzedHashesTableView();
+    }
+
+    public void updateAnalyzedHashesTableView(){
+        twAnalyzedHashes.getItems().clear();
+        Set<AnalyzedHash> tmp = new HashSet<>();
+        for (AnalyzedHash analyzedHash : analyzedHashes.values()) {
+            tmp.add(analyzedHash);
+        }
+        twAnalyzedHashes.getItems().addAll(tmp);
+        lAnalyzedHashesSize.setText("Analyzed hashes: "+counterOfAnalyzedHashes);
     }
 
     ///////////////////////////////////////////SETTINGS TAB/////////////////////////////////////////////////////////////
@@ -284,6 +357,8 @@ public class MainController implements Initializable {
         FileChooser fc = new FileChooser();
         File file = fc.showOpenDialog(null);
 
+        if(file == null) return;
+
         sizeWordlist = Tools.countLines(file);
 
         wordlist = file;
@@ -295,6 +370,8 @@ public class MainController implements Initializable {
     @FXML private void chooseRainbowTable() {
         FileChooser fc = new FileChooser();
         File file = fc.showOpenDialog(null);
+
+        if(file == null) return;
 
         sizeRainbowtable = Tools.countLines(file);
 
@@ -348,6 +425,12 @@ public class MainController implements Initializable {
         progressBar.setProgress( progress );
     }
 
+    public void updateCrackedHashesTableView() {
+
+        tvCrackedHashes.getItems().clear();
+        tvCrackedHashes.getItems().addAll(crackedHashes);
+    }
+
     ///////////////////////////////////////////////////WORDLIST/////////////////////////////////////////////////////////
 
     public void startCrackWithWordlist(){
@@ -375,17 +458,14 @@ public class MainController implements Initializable {
 
                         String hexString = Tools.hash(password, attackAlgorithm);
 
-                        if(analyzedHashesMap.containsKey(hexString)){
-                            CrackedHash ch = new CrackedHash(hexString,password);
-
-                            crackedHashes.add(ch);
-
-                            Platform.runLater(() -> tvCrackedHashes.getItems().add(ch));
-                        }
+                        if(analyzedHashes.containsKey(hexString))
+                            crackedHashes.add(new CrackedHash(hexString,password));
 
                         counter++;
-                        if(counter%1000==0)
-                            Platform.runLater(() -> updateProgressBar(counter, sizeWordlist));
+                        if(counter%1000==0) Platform.runLater(() -> {
+                                updateProgressBar(counter, sizeWordlist);
+                                updateCrackedHashesTableView();
+                            });
                     }
                 }catch(Exception e){
                     e.printStackTrace();
@@ -453,7 +533,7 @@ public class MainController implements Initializable {
 
                         String[] array = line.trim().split(":");
 
-                        if (analyzedHashesMap.containsKey(array[0])) {
+                        if (analyzedHashes.containsKey(array[0])) {
                             CrackedHash ch = new CrackedHash(array[0], array[1]);
 
                             crackedHashes.add(ch);

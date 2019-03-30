@@ -1,5 +1,6 @@
 package activation;
 
+import javafx.application.Platform;
 import main.MainController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -30,9 +31,19 @@ public class ActivationController implements Initializable {
 
             keyField.setText(key);
 
-        }catch (FileNotFoundException e){
+            boolean isValidKey = validateKey(key);
 
-        } catch (IOException e) {
+            if(isValidKey == true){
+                openMainWindow(true);
+            }else {
+                keyStatus.setText("Bad key");
+            }
+
+        }catch (FileNotFoundException e){
+            System.out.println("Couldn't found key file");
+        }catch (NullPointerException e){
+            System.out.println("Empty key file");
+        }catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -56,8 +67,10 @@ public class ActivationController implements Initializable {
 
     private void openMainWindow(boolean isFullEdition) {
         try {
-            Stage oldStage = (Stage) keyField.getScene().getWindow();
-            oldStage.close();
+            Platform.runLater(() -> {
+                Stage oldStage = (Stage) keyField.getScene().getWindow();
+                oldStage.close();
+            });
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../main/main.fxml"));
 
@@ -69,6 +82,7 @@ public class ActivationController implements Initializable {
             controller.setIsFullEdition(isFullEdition);
 
             stage.setScene(scene);
+            stage.setTitle("Cerberus");
             stage.show();
 
         } catch (IOException ex) {
@@ -86,7 +100,7 @@ public class ActivationController implements Initializable {
         }
 
         switch (sum){
-            case 1280:
+            case 1875:
                 writeKeyToFile(key);
                 return true;
             default:

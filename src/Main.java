@@ -20,7 +20,8 @@ public class Main extends Application {
 
         Scene scene = new Scene(root);
         stage.setScene(scene);
-        stage.setTitle("Cerberus");
+        stage.setResizable(false);
+        stage.setTitle("Activation");
         stage.show();
     }
 
