@@ -1,31 +1,28 @@
-package tools.rainbowTableGenerator;
+package tools.benchmark;
 
-import tools.Tools;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.stage.FileChooser;
+import javafx.scene.text.Text;
+import tools.Tools;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class RainbowTableGeneratorController implements Initializable {
+public class BenchmarkController implements Initializable {
 
-    @FXML Label lWordlistPath;
-    @FXML Label lOutputPath;
-    @FXML ChoiceBox<String> cbAlgorithm;
-    @FXML ProgressBar pbProgress;
-
-    private File passwordFile;
-    private String passwordFilePath;
-    private String outputFilePath;
-
-    private static long counter = 0;
-    private static long fileSize;
+    @FXML private ChoiceBox<String> cbAlgorithm;
+    @FXML private Button bBenchmark;
+    @FXML private Text tOneThread;
+    @FXML private Text tFourThread;
+    @FXML private ProgressBar pbProgress;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -38,24 +35,10 @@ public class RainbowTableGeneratorController implements Initializable {
         cbAlgorithm.setValue(cbAlgorithm.getItems().get(0));
     }
 
-    @FXML private void btnSelectPasswordFile() {
-        FileChooser fc = new FileChooser();
-        passwordFile = fc.showOpenDialog(null);
-
-        fileSize = Tools.countLines(passwordFile);
-
-        passwordFilePath = passwordFile.getAbsolutePath();
-        outputFilePath = passwordFilePath + ".rt";
-
-        lWordlistPath.setText(passwordFilePath);
-        lOutputPath.setText(outputFilePath);
-    }
 
     @FXML private void btnGenerate(){
         Thread thread = new Thread(() -> {
             try {
-                BufferedReader br = new BufferedReader(new FileReader(passwordFilePath));
-                BufferedWriter bw = new BufferedWriter(new FileWriter(outputFilePath));
 
                 String algorithm = cbAlgorithm.getValue().toString();
                 //bw.write(algorithm+"\n");
@@ -83,4 +66,5 @@ public class RainbowTableGeneratorController implements Initializable {
         double progress = (double) counter / fileSize;
         pbProgress.setProgress(progress);
     }
+
 }

@@ -167,6 +167,10 @@ public class MainController implements Initializable {
         openToolWindow("../tools/rainbowTableGenerator/rainbowTableGenerator.fxml","Rainbow-Table Generator");
     }
 
+    @FXML private void btnOpenBenchmark() {
+        openToolWindow("../tools/rainbowTableGenerator/rainbowTableGenerator.fxml","Rainbow-Table Generator");
+    }
+
     private void openToolWindow(String fxml, String title) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
@@ -427,8 +431,12 @@ public class MainController implements Initializable {
 
     public void updateCrackedHashesTableView() {
 
-        tvCrackedHashes.getItems().clear();
-        tvCrackedHashes.getItems().addAll(crackedHashes);
+        try {
+            tvCrackedHashes.getItems().clear();
+            tvCrackedHashes.getItems().addAll(crackedHashes);
+        }catch (ConcurrentModificationException e){
+            //ignorujeme :]
+        }
     }
 
     ///////////////////////////////////////////////////WORDLIST/////////////////////////////////////////////////////////
