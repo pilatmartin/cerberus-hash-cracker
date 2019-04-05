@@ -3,7 +3,6 @@ package main;
 import entity.AnalyzedHash;
 import entity.CrackedHash;
 import entity.LoadedHash;
-import javafx.collections.ObservableList;
 import tools.Tools;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -52,39 +51,6 @@ public class MainController implements Initializable {
     }
 
     ////////////////////////////////////////////MENU////////////////////////////////////////////////////////////////////
-    // menu buttons on top of window
-
-    @FXML private void btnSaveProject(){
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter("lastproject.cerb"));
-
-            for (LoadedHash loadedHash : loadedHashes) {
-                writer.write(loadedHash.getHexString()+"\n");
-            }
-
-            writer.write("---END OF LOADED HASHES---\n");
-            writer.write("--------------------------\n");
-
-            for (AnalyzedHash analyzedHash : analyzedHashes.values()) {
-                writer.write(analyzedHash.getHexString()+"\n"+analyzedHash.getAlgorithm()+"\n");
-            }
-
-            writer.write("---END OF ANALYZED HASHES---\n");
-            writer.write("----------------------------\n");
-
-            for (CrackedHash crackedHash : crackedHashes) {
-                writer.write(crackedHash.getHexString()+"\n"+crackedHash.getPassword()+"\n");
-            }
-
-            writer.write("---END OF CRACKED HASHES---\n");
-            writer.write("---------------------------\n");
-
-            writer.close();
-            System.out.println("Saved");
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-    }
 
     @FXML private void btnOpenProject(){
         FileChooser fc = new FileChooser();
@@ -105,7 +71,7 @@ public class MainController implements Initializable {
                         case 0:
                             hash = br.readLine();
                             if (hash.equals("---END OF LOADED HASHES---")){
-                                hash = br.readLine();
+                                br.readLine();
                                 stage++;
                                 continue;
                             }
@@ -150,6 +116,66 @@ public class MainController implements Initializable {
 
     }
 
+    @FXML private void btnSaveProject(){
+        try {
+            FileChooser saveAs = new FileChooser();
+
+            File outputFile = saveAs.showSaveDialog(null);
+
+            if(outputFile==null) return;
+
+            BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile+".cerb"));
+
+            for (LoadedHash loadedHash : loadedHashes) {
+                writer.write(loadedHash.getHexString()+"\n");
+            }
+
+            writer.write("---END OF LOADED HASHES---\n");
+            writer.write("--------------------------\n");
+
+            for (AnalyzedHash analyzedHash : analyzedHashes.values()) {
+                writer.write(analyzedHash.getHexString()+"\n"+analyzedHash.getAlgorithm()+"\n");
+            }
+
+            writer.write("---END OF ANALYZED HASHES---\n");
+            writer.write("----------------------------\n");
+
+            for (CrackedHash crackedHash : crackedHashes) {
+                writer.write(crackedHash.getHexString()+"\n"+crackedHash.getPassword()+"\n");
+            }
+
+            writer.write("---END OF CRACKED HASHES---\n");
+            writer.write("---------------------------\n");
+
+            writer.close();
+            System.out.println("Saved");
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    @FXML private void btnExportToCSV(){
+
+        FileChooser saveAs = new FileChooser();
+
+        File outputFile = saveAs.showSaveDialog(null);
+
+        if (outputFile != null) {
+            try {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile+".csv"));
+
+                for (CrackedHash crackedHash : crackedHashes) {
+                    writer.write(crackedHash.getHexString()+";"+crackedHash.getPassword()+"\n");
+                }
+
+                writer.close();
+                System.out.println("Saved");
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
     @FXML private void btnExit(){
         isCracking = false;
         System.exit(0);
@@ -168,7 +194,7 @@ public class MainController implements Initializable {
     }
 
     @FXML private void btnOpenBenchmark() {
-        openToolWindow("../tools/rainbowTableGenerator/rainbowTableGenerator.fxml","Rainbow-Table Generator");
+        openToolWindow("../tools/benchmark/benchmark.fxml","Benchmark");
     }
 
     private void openToolWindow(String fxml, String title) {
@@ -190,10 +216,9 @@ public class MainController implements Initializable {
     }
 
     ///////////////////////////////////////////LOAD HASHES TAB//////////////////////////////////////////////////////////
-    // first tab
 
     @FXML private Label lHashfileSize;
-    @FXML private ListView lvLoadedHashes = new ListView();
+    @FXML private ListView<LoadedHash> lvLoadedHashes = new ListView<>();
     @FXML private TextField tfAddHash;
 
     // stlacenie tlacitka 'select hash file'
@@ -208,8 +233,10 @@ public class MainController implements Initializable {
                 BufferedReader br = new BufferedReader(new FileReader(file));
 
                 String hash;
-                while ((hash = br.readLine()) != null)
+                while ((hash = br.readLine()) != null) {
+                    if(!isFullEdition) if(loadedHashes.size()>=10) break;
                     loadedHashes.add(new LoadedHash(hash));
+                }
 
                 Platform.runLater(this::updateLoadedHashesListView);
             } catch (Exception e) {
@@ -231,9 +258,13 @@ public class MainController implements Initializable {
         tfAddHash.clear();
 
         if(s.length() == 0) {
-            tfAddHash.setPromptText("cannot insert empty value");
+            tfAddHash.setPromptText("Cannot insert empty value");
         }else if(s.length()%2!=0) {
-            tfAddHash.setPromptText("hash must be even number");
+            tfAddHash.setPromptText("Hash must be even number");
+        }else if(!isFullEdition) {
+            if(loadedHashes.size()>=10) {
+                tfAddHash.setPromptText("Community version supports maximum of 10 hashes");
+            }
         }else{
             loadedHashes.add(new LoadedHash(s));
             updateLoadedHashesListView();
@@ -241,10 +272,12 @@ public class MainController implements Initializable {
     }
 
     // function called if we want to update list view
-    public void updateLoadedHashesListView(){
+    private void updateLoadedHashesListView(){
         lvLoadedHashes.getItems().clear();
         lvLoadedHashes.getItems().addAll(loadedHashes);
-        lHashfileSize.setText("Hashes loaded: " + loadedHashes.size());
+
+        String out = String.format("Hashes loaded: %,d", loadedHashes.size());
+        lHashfileSize.setText(out);
     }
 
     ///////////////////////////////////////ANALYZE HASHES TAB///////////////////////////////////////////////////////////
@@ -277,14 +310,12 @@ public class MainController implements Initializable {
         updateAnalyzedHashesTableView();
     }
 
-    public void updateAnalyzedHashesTableView(){
+    private void updateAnalyzedHashesTableView(){
         twAnalyzedHashes.getItems().clear();
-        Set<AnalyzedHash> tmp = new HashSet<>();
-        for (AnalyzedHash analyzedHash : analyzedHashes.values()) {
-            tmp.add(analyzedHash);
-        }
-        twAnalyzedHashes.getItems().addAll(tmp);
-        lAnalyzedHashesSize.setText("Analyzed hashes: "+counterOfAnalyzedHashes);
+        twAnalyzedHashes.getItems().addAll(analyzedHashes.values());
+
+        String out = String.format("Hashes analyzed: %,d", counterOfAnalyzedHashes);
+        lAnalyzedHashesSize.setText(out);
     }
 
     ///////////////////////////////////////////SETTINGS TAB/////////////////////////////////////////////////////////////
@@ -368,7 +399,9 @@ public class MainController implements Initializable {
         wordlist = file;
 
         labelWordlistPath.setText(file.getAbsolutePath());
-        labelWordlistSize.setText("Size: "+sizeWordlist);
+
+        String out = String.format("Size: %,d", sizeWordlist);
+        labelWordlistSize.setText(out);
     }
 
     @FXML private void chooseRainbowTable() {
@@ -382,7 +415,8 @@ public class MainController implements Initializable {
         rainbowTable = file;
 
         labelRainbowTablePath.setText(file.getAbsolutePath());
-        labelRainbowTableSize.setText("Size: "+sizeRainbowtable);
+        String out = String.format("Size: %,d", sizeRainbowtable);
+        labelRainbowTableSize.setText(out);
     }
 
     /////////////////////////////////////////////RESULTS TAB////////////////////////////////////////////////////////////
@@ -390,7 +424,7 @@ public class MainController implements Initializable {
     @FXML private Button btnStartCracking;
     @FXML private Button btnStopCracking;
     @FXML private Label labelProgress;
-    @FXML private ChoiceBox cbAttackAlgorithm;
+    @FXML private ChoiceBox<String> cbAttackAlgorithm;
     @FXML private ProgressBar progressBar;
 
     @FXML private TableView<CrackedHash> tvCrackedHashes;
@@ -423,13 +457,16 @@ public class MainController implements Initializable {
         isCracking = false;
     }
 
-    public void updateProgressBar(long current, long max) {
-        labelProgress.setText(current + " / " + max);
+    private void updateProgressBar(long current, long max) {
+
+        String out = String.format("%,d / %,d", current,max);
+        labelProgress.setText(out);
+
         float progress = (float) current / max;
         progressBar.setProgress( progress );
     }
 
-    public void updateCrackedHashesTableView() {
+    private void updateCrackedHashesTableView() {
 
         try {
             tvCrackedHashes.getItems().clear();
@@ -441,12 +478,12 @@ public class MainController implements Initializable {
 
     ///////////////////////////////////////////////////WORDLIST/////////////////////////////////////////////////////////
 
-    public void startCrackWithWordlist(){
+    private void startCrackWithWordlist(){
 
-        final String attackAlgorithm = cbAttackAlgorithm.getValue().toString();
+        final String attackAlgorithm = cbAttackAlgorithm.getValue();
 
         counter = 0;
-        Thread threads[] = new Thread[threadsCount];
+        Thread[] threads = new Thread[threadsCount];
 
         for (int i = 0; i < threads.length; i++) {
 
@@ -486,7 +523,7 @@ public class MainController implements Initializable {
 
     //////////////////////////////////////////////////BRUTEFORCE////////////////////////////////////////////////////////
 
-    public void startCrackWithBruteforce(){
+    private void startCrackWithBruteforce(){
 
         charset = textFieldCharset.getText().toCharArray();
         minLength = Integer.parseInt(textFieldMinLength.getText());
@@ -501,7 +538,7 @@ public class MainController implements Initializable {
         }
     }
 
-    public void generate(String str, int pos, int length) {
+    private void generate(String str, int pos, int length) {
         if (length == 0) {
             System.out.println(str);
             counter++;
@@ -519,10 +556,10 @@ public class MainController implements Initializable {
 
     //////////////////////////////////////////////////RAINBOW TABLE/////////////////////////////////////////////////////
 
-    public void startCrackWithRainbowTable(){
+    private void startCrackWithRainbowTable(){
 
         counter = 0;
-        Thread threads[] = new Thread[threadsCount];
+        Thread[] threads = new Thread[threadsCount];
 
         for (int i = 0; i < threads.length; i++) {
 

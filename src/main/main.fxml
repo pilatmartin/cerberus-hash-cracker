@@ -19,14 +19,15 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="900.0" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.202-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="900.0" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.MainController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
           <Menu mnemonicParsing="false" text="Cerb">
             <items>
-                <MenuItem mnemonicParsing="false" onAction="#btnSaveProject" text="Save project" />
-                <MenuItem mnemonicParsing="false" onAction="#btnOpenProject" text="Open project" />
+                <MenuItem mnemonicParsing="false" onAction="#btnSaveProject" text="Save project..." />
+                <MenuItem mnemonicParsing="false" onAction="#btnOpenProject" text="Open project..." />
+                  <MenuItem mnemonicParsing="false" onAction="#btnExportToCSV" text="Save to CSV..." />
                 <MenuItem mnemonicParsing="false" onAction="#btnExit" text="Exit" />
             </items>
           </Menu>
@@ -35,12 +36,12 @@
                 <MenuItem mnemonicParsing="false" onAction="#btnOpenHasher" text="Hasher" />
                 <MenuItem mnemonicParsing="false" onAction="#btnOpenDistinguisher" text="Distinguisher" />
                 <MenuItem mnemonicParsing="false" onAction="#btnOpenRainbowTableGenerator" text="RainbowTable Generator" />
+                  <MenuItem mnemonicParsing="false" onAction="#btnOpenBenchmark" text="Benchmark" />
             </items>
           </Menu>
             <Menu mnemonicParsing="false" text="Help">
                <items>
                   <MenuItem mnemonicParsing="false" text="Documentation" />
-                  <MenuItem mnemonicParsing="false" text="Distinguisher" />
                   <MenuItem mnemonicParsing="false" text="About..." />
                </items>
             </Menu>

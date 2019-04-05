@@ -1,5 +1,6 @@
 package tools.benchmark;
 
+import entity.CrackedHash;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -9,11 +10,9 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.text.Text;
 import tools.Tools;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class BenchmarkController implements Initializable {
@@ -35,35 +34,55 @@ public class BenchmarkController implements Initializable {
         cbAlgorithm.setValue(cbAlgorithm.getItems().get(0));
     }
 
+    static private long oneThreadCounter = 0;
+    static private boolean isBenchmarking = false;
+
 
     @FXML private void btnGenerate(){
+
+        final String attackAlgorithm = cbAlgorithm.getValue().toString();
+
+        isBenchmarking = true;
+
+        Map<String,CrackedHash> testMap = new HashMap<>();
+
+        oneThreadCounter = 0;
         Thread thread = new Thread(() -> {
-            try {
 
-                String algorithm = cbAlgorithm.getValue().toString();
-                //bw.write(algorithm+"\n");
+            long startTime = System.currentTimeMillis();
 
-                counter = 0;
-                String password;
-                while ((password = br.readLine()) != null) {
-                    String hexString = Tools.hash(password, algorithm);
-                    if(hexString.equals("d41d8cd98f00b204e9800998ecf8427e")) continue;
-                    bw.write(hexString+":"+password+"\n");
+            while(true) {
 
-                    counter++;
-                    Platform.runLater(() -> updateProgressBar());
-                }
-                br.close();
-                bw.close();
-            } catch (Exception e) {
-                e.printStackTrace();
+                long currentTimeMillis = System.currentTimeMillis();
+
+                if (startTime + 10000 < currentTimeMillis) stopBenchmark();
+                if (!isBenchmarking) break;
+
+                String hexString = Tools.hash("benchmark", attackAlgorithm);
+
+                if (testMap.containsKey(hexString));
+
+
+                oneThreadCounter++;
+                if (oneThreadCounter % 1000 == 0) Platform.runLater(() -> {
+                    updateProgressBar(currentTimeMillis-startTime, 10000);
+                });
             }
+
+            String out = String.format("One thread %,d H/s", oneThreadCounter/10);
+            tOneThread.setText(out);
+            out = String.format("Four threads: %,d H/s", (oneThreadCounter/10)*4);
+            tFourThread.setText(out);
         });
         thread.start();
     }
 
-    private void updateProgressBar(){
-        double progress = (double) counter / fileSize;
+    private void stopBenchmark(){
+        isBenchmarking = false;
+    }
+
+    private void updateProgressBar(long current, long full){
+        double progress = (double) current / full;
         pbProgress.setProgress(progress);
     }
 
