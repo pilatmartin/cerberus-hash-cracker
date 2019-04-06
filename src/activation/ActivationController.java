@@ -83,6 +83,8 @@ public class ActivationController implements Initializable {
 
             stage.setScene(scene);
             stage.setTitle("Cerberus");
+            stage.setMinHeight(650);
+            stage.setMinWidth(900);
             stage.show();
 
         } catch (IOException ex) {
