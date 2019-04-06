@@ -1,3 +1,0 @@
-# Cerberus
-![cerberus](https://github.com/melnicek/cerberus/blob/master/logo.jpg)  
-Cerberus a tool for recovering your passwords. It allows easy recovery of passwords hashed by multiple kinds of hash algorithms using various types of attacks, such as dictionary attacks, brute-force or even Rainbow-Table attack. It's main purpose is to simplify password recovery for network administrators, security consultants / experts, forensics. The program will be released in two editions: community and professional. Cerberus will also have other functions such as automatic hash recognition or offline rainbow-table generator.
