@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <RadioButton fx:id="radioButtonWordlist" layoutX="34.0" layoutY="21.0" mnemonicParsing="false" onAction="#radioButtonChange" selected="true" text="Wordlist">
+         <toggleGroup>
+            <ToggleGroup fx:id="crackMethod" />
+         </toggleGroup>
+      </RadioButton>
+      <Button fx:id="buttonSelectWordlist" layoutX="34.0" layoutY="52.0" mnemonicParsing="false" onAction="#selectWordlist" text="Select wordlist" />
+      <Label fx:id="labelWordlistPath" layoutX="170.0" layoutY="57.0" text="/path/to/your/wordlist" />
+      <Label fx:id="labelWordlistSize" layoutX="37.0" layoutY="94.0" text="Size: 0" />
+      <RadioButton fx:id="radioButtonBrueforce" layoutX="35.0" layoutY="155.0" mnemonicParsing="false" onAction="#radioButtonChange" text="Bruteforce" toggleGroup="$crackMethod" />
+      <Label fx:id="labelCharset" disable="true" layoutX="36.0" layoutY="198.0" text="Charset:" />
+      <TextField fx:id="textFieldCharset" disable="true" layoutX="138.0" layoutY="193.0" prefHeight="26.0" prefWidth="397.0" text="abcdefghijklmnopqrstuvwxyz" />
+      <Label fx:id="labelMinLength" disable="true" layoutX="35.0" layoutY="239.0" text="MIN length" />
+      <TextField fx:id="textFieldMaxLength" disable="true" layoutX="138.0" layoutY="276.0" prefHeight="26.0" prefWidth="66.0" text="0" />
+      <Label fx:id="labelMaxLength" disable="true" layoutX="35.0" layoutY="281.0" text="MAX length" />
+      <TextField fx:id="textFieldMinLength" disable="true" layoutX="139.0" layoutY="234.0" prefHeight="26.0" prefWidth="65.0" text="0" />
+      <RadioButton fx:id="radioButtonRainbowTable" layoutX="33.0" layoutY="354.0" mnemonicParsing="false" onAction="#radioButtonChange" text="Rainbow table" toggleGroup="$crackMethod" />
+      <Button fx:id="buttonSelectRainbowTable" disable="true" layoutX="30.0" layoutY="389.0" mnemonicParsing="false" onAction="#chooseRainbowTable" text="Select rainbow table" />
+      <Label fx:id="labelRainbowTablePath" disable="true" layoutX="203.0" layoutY="394.0" text="/path/to/your/rainbow/table" />
+      <Label fx:id="labelRainbowTableSize" disable="true" layoutX="37.0" layoutY="440.0" text="Size: 0" />
+   </children>
+</AnchorPane>
