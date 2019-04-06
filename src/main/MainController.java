@@ -15,6 +15,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javax.tools.Tool;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -222,7 +223,7 @@ public class MainController implements Initializable {
     @FXML private TextField tfAddHash;
 
     // stlacenie tlacitka 'select hash file'
-    @FXML private void selectHashFile() {
+    @FXML private void btnSelectHashFile() {
         FileChooser fc = new FileChooser();
         File file = fc.showOpenDialog(null);
 
@@ -234,7 +235,14 @@ public class MainController implements Initializable {
 
                 String hash;
                 while ((hash = br.readLine()) != null) {
-                    if(!isFullEdition) if(loadedHashes.size()>=10) break;
+                    if(!isFullEdition) if(loadedHashes.size()>=10) {
+                        Platform.runLater(() -> {
+                            String title = "Using community version";
+                            String text = "You are using community version, you can add maximum of 10 hashes";
+                            Tools.openInfoWindow(title, text);
+                        });
+                        break;
+                    }
                     loadedHashes.add(new LoadedHash(hash));
                 }
 
@@ -247,13 +255,13 @@ public class MainController implements Initializable {
     }
 
     // stlacenie tlacitka 'clear hashes'
-    @FXML private void clearHashes() {
+    @FXML private void btnClearHashes() {
         loadedHashes = new HashSet<>();
         updateLoadedHashesListView();
     }
 
     // stlacenie tlacitka 'add hashes'
-    @FXML private void addHash() {
+    @FXML private void btnAddHash() {
         String s = tfAddHash.getText();
         tfAddHash.clear();
 
@@ -263,6 +271,11 @@ public class MainController implements Initializable {
             tfAddHash.setPromptText("Hash must be even number");
         }else if(!isFullEdition) {
             if(loadedHashes.size()>=10) {
+                Platform.runLater(() -> {
+                    String title = "Using community version";
+                    String text = "You are using community version, you can add maximum of 10 hashes";
+                    Tools.openInfoWindow(title, text);
+                });
                 tfAddHash.setPromptText("Community version supports maximum of 10 hashes");
             }
         }else{
@@ -289,7 +302,7 @@ public class MainController implements Initializable {
 
     private static long counterOfAnalyzedHashes = 0;
 
-    @FXML private  void analyzeLoadedHashes(){
+    @FXML private void btnAnalyzeLoadedHashes(){
 
         counterOfAnalyzedHashes = 0;
 

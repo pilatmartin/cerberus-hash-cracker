@@ -1,5 +1,7 @@
 package tools;
 
+import javafx.scene.control.Alert;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,20 +11,12 @@ import java.security.NoSuchAlgorithmException;
 
 public class Tools {
 
-    public static String hash(String password, String algorithm){
-        try {
-            byte[] inputBytes = Tools.stringToByteArray(password);
-
-            MessageDigest digest = MessageDigest.getInstance(algorithm);
-
-            byte[] byteArray = digest.digest(inputBytes);
-
-            return Tools.byteArrayToString(byteArray);
-
-        }catch (NoSuchAlgorithmException e){
-            e.printStackTrace();
-            return null;
-        }
+    public static void openInfoWindow(String title, String text){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(text);
+        alert.show();
     }
 
     public static long countLines(File filename){
@@ -60,6 +54,22 @@ public class Tools {
         }
     }
 
+    public static String hash(String password, String algorithm){
+        try {
+            byte[] inputBytes = Tools.stringToByteArray(password);
+
+            MessageDigest digest = MessageDigest.getInstance(algorithm);
+
+            byte[] byteArray = digest.digest(inputBytes);
+
+            return Tools.byteArrayToString(byteArray);
+
+        }catch (NoSuchAlgorithmException e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static String byteArrayToString(byte[] byteArray){
         StringBuilder sb = new StringBuilder();
         for (byte b : byteArray)
@@ -70,21 +80,6 @@ public class Tools {
 
     public static byte[] stringToByteArray(String string){
         return string.getBytes();
-    }
-
-    public static byte[] hexStringToByteArray(String string){
-        int len = string.length();
-        byte[] data = new byte[len/2];
-        for (int i = 0; i < len; i += 2) {
-            data[i/2] = (byte) ((Character.digit(string.charAt(i),16) << 4) + Character.digit(string.charAt(i+1),16));
-        }
-        return data;
-    }
-
-    public static void printByteArray(byte[] a){
-        for (byte b : a) {
-            System.out.print(b);
-        }
     }
 
     public static String distinguishHash(String hash) {

@@ -55,12 +55,12 @@
                <content>
                   <AnchorPane>
                      <children>
-                        <Button layoutX="23.0" layoutY="18.0" mnemonicParsing="false" onAction="#selectHashFile" text="Select hash file" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="10.0" />
-                        <Button layoutX="155.0" layoutY="18.0" mnemonicParsing="false" onAction="#clearHashes" text="Clear all hashes" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="10.0" />
+                        <Button layoutX="23.0" layoutY="18.0" mnemonicParsing="false" onAction="#btnSelectHashFile" text="Select hash file" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="10.0" />
+                        <Button layoutX="155.0" layoutY="18.0" mnemonicParsing="false" onAction="#btnClearHashes" text="Clear all hashes" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="10.0" />
                         <Label fx:id="lHashfileSize" layoutX="290.0" layoutY="23.0" prefHeight="16.0" prefWidth="274.0" text="Hashes loaded: 0" AnchorPane.leftAnchor="150.0" AnchorPane.topAnchor="15.0" />
                         <ListView fx:id="lvLoadedHashes" layoutX="19.0" layoutY="59.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="50.0" />
-                         <TextField fx:id="tfAddHash" layoutX="20.0" layoutY="428.0" onAction="#addHash" prefHeight="26.0" prefWidth="779.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="110.0" />
-                         <Button layoutX="818.0" layoutY="429.0" mnemonicParsing="false" onAction="#addHash" text="Add hash" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="20.0" />
+                         <TextField fx:id="tfAddHash" layoutX="20.0" layoutY="428.0" onAction="#btnAddHash" prefHeight="26.0" prefWidth="779.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="110.0" />
+                         <Button layoutX="818.0" layoutY="429.0" mnemonicParsing="false" onAction="#btnAddHash" text="Add hash" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="20.0" />
                          </children>
                   </AnchorPane>
                </content>
@@ -69,7 +69,7 @@
                <content>
                   <AnchorPane>
                      <children>
-                        <Button layoutX="23.0" layoutY="18.0" mnemonicParsing="false" onAction="#analyzeLoadedHashes" text="Analyze loaded hashes" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="10.0" />
+                        <Button layoutX="23.0" layoutY="18.0" mnemonicParsing="false" onAction="#btnAnalyzeLoadedHashes" text="Analyze loaded hashes" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="10.0" />
                         <Label fx:id="lAnalyzedHashesSize" layoutX="212.0" layoutY="15.0" prefHeight="16.0" prefWidth="274.0" text="Hashes analyzed: 0" AnchorPane.leftAnchor="215.0" AnchorPane.topAnchor="15.0" />
                         <TableView fx:id="twAnalyzedHashes" layoutX="44.0" layoutY="69.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="50.0">
                           <columns>
