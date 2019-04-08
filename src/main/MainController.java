@@ -3,6 +3,7 @@ package main;
 import entity.AnalyzedHash;
 import entity.CrackedHash;
 import entity.LoadedHash;
+import entity.Project;
 import tools.Tools;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -27,9 +28,7 @@ public class MainController implements Initializable {
         this.isFullEdition = isFullEdition;
     }
 
-    private Set<LoadedHash> loadedHashes = new HashSet<>();
-    private Map<String,AnalyzedHash> analyzedHashes = new HashMap<>();
-    private Set<CrackedHash> crackedHashes = new HashSet<>();
+    private Project project = new Project();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -54,104 +53,60 @@ public class MainController implements Initializable {
     ////////////////////////////////////////////MENU////////////////////////////////////////////////////////////////////
 
     @FXML private void btnOpenProject(){
+        if(!isFullEdition){
+            String title = "Using community version";
+            String text = "You are using community version, you can't open another project";
+            Tools.openInfoWindow(title, text);
+            return;
+        }
+
         FileChooser fc = new FileChooser();
         File file = fc.showOpenDialog(null);
 
         if(file == null) return;
 
         Thread thread = new Thread(() -> {
+            ObjectInputStream objectinputstream = null;
             try {
-                BufferedReader br = new BufferedReader(new FileReader(file));
-
-                int stage = 0;
-                boolean check = true;
-                String hash;
-                while (check) {
-
-                    switch (stage){
-                        case 0:
-                            hash = br.readLine();
-                            if (hash.equals("---END OF LOADED HASHES---")){
-                                br.readLine();
-                                stage++;
-                                continue;
-                            }
-                            loadedHashes.add(new LoadedHash(hash));
-                            break;
-                        case 1:
-                            hash = br.readLine();
-                            String algorithm = br.readLine();
-                            if (hash.equals("---END OF ANALYZED HASHES---")){
-                                stage++;
-                                continue;
-                            }
-                            analyzedHashes.put(hash, new AnalyzedHash(hash,algorithm));
-                            break;
-                        case 2:
-                            hash = br.readLine();
-                            String password = br.readLine();
-                            if (hash.equals("---END OF CRACKED HASHES---")){
-                                stage++;
-                                continue;
-                            }
-                            crackedHashes.add(new CrackedHash(hash,password));
-                            break;
-                        case 3:
-                            check = false;
-                            break;
-                    }
-                }
-
-                br.close();
-
-                Platform.runLater(() -> {
-                    updateAnalyzedHashesTableView();
-                    updateLoadedHashesListView();
-                    updateCrackedHashesTableView();
-                });
+                FileInputStream streamIn = new FileInputStream(file);
+                objectinputstream = new ObjectInputStream(streamIn);
+                project = (Project) objectinputstream.readObject();
+                objectinputstream.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            Platform.runLater(() -> {
+                updateAnalyzedHashesTableView();
+                updateLoadedHashesListView();
+                updateCrackedHashesTableView();
+            });
         });
         thread.start();
 
     }
 
     @FXML private void btnSaveProject(){
-        try {
-            FileChooser saveAs = new FileChooser();
+        if(!isFullEdition){
+            String title = "Using community version";
+            String text = "You are using community version, you can't save your project";
+            Tools.openInfoWindow(title, text);
+            return;
+        }
+        FileChooser saveAs = new FileChooser();
+        File outputFile = saveAs.showSaveDialog(null);
 
-            File outputFile = saveAs.showSaveDialog(null);
+        if(outputFile==null) return;
 
-            if(outputFile==null) return;
-
-            BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile+".cerb"));
-
-            for (LoadedHash loadedHash : loadedHashes) {
-                writer.write(loadedHash.getHexString()+"\n");
-            }
-
-            writer.write("---END OF LOADED HASHES---\n");
-            writer.write("--------------------------\n");
-
-            for (AnalyzedHash analyzedHash : analyzedHashes.values()) {
-                writer.write(analyzedHash.getHexString()+"\n"+analyzedHash.getAlgorithm()+"\n");
-            }
-
-            writer.write("---END OF ANALYZED HASHES---\n");
-            writer.write("----------------------------\n");
-
-            for (CrackedHash crackedHash : crackedHashes) {
-                writer.write(crackedHash.getHexString()+"\n"+crackedHash.getPassword()+"\n");
-            }
-
-            writer.write("---END OF CRACKED HASHES---\n");
-            writer.write("---------------------------\n");
-
-            writer.close();
-            System.out.println("Saved");
-        }catch (IOException e){
-            e.printStackTrace();
+        ObjectOutputStream oos = null;
+        FileOutputStream fout = null;
+        try{
+            fout = new FileOutputStream(outputFile+".cerb", true);
+            oos = new ObjectOutputStream(fout);
+            oos.writeObject(project);
+            oos.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -165,7 +120,7 @@ public class MainController implements Initializable {
             try {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile+".csv"));
 
-                for (CrackedHash crackedHash : crackedHashes) {
+                for (CrackedHash crackedHash : project.getCrackedHashes()) {
                     writer.write(crackedHash.getHexString()+";"+crackedHash.getPassword()+"\n");
                 }
 
@@ -235,7 +190,7 @@ public class MainController implements Initializable {
 
                 String hash;
                 while ((hash = br.readLine()) != null) {
-                    if(!isFullEdition) if(loadedHashes.size()>=10) {
+                    if(!isFullEdition) if(project.getLoadedHashes().size()>=10) {
                         Platform.runLater(() -> {
                             String title = "Using community version";
                             String text = "You are using community version, you can add maximum of 10 hashes";
@@ -243,7 +198,7 @@ public class MainController implements Initializable {
                         });
                         break;
                     }
-                    loadedHashes.add(new LoadedHash(hash));
+                    project.addLoadedHash(new LoadedHash(hash));
                 }
 
                 Platform.runLater(this::updateLoadedHashesListView);
@@ -256,7 +211,7 @@ public class MainController implements Initializable {
 
     // stlacenie tlacitka 'clear hashes'
     @FXML private void btnClearHashes() {
-        loadedHashes = new HashSet<>();
+        project.setLoadedHashes(new HashSet<>());
         updateLoadedHashesListView();
     }
 
@@ -270,7 +225,7 @@ public class MainController implements Initializable {
         }else if(s.length()%2!=0) {
             tfAddHash.setPromptText("Hash must be even number");
         }else if(!isFullEdition) {
-            if(loadedHashes.size()>=10) {
+            if(project.getLoadedHashes().size()>=10) {
                 Platform.runLater(() -> {
                     String title = "Using community version";
                     String text = "You are using community version, you can add maximum of 10 hashes";
@@ -279,7 +234,7 @@ public class MainController implements Initializable {
                 tfAddHash.setPromptText("Community version supports maximum of 10 hashes");
             }
         }else{
-            loadedHashes.add(new LoadedHash(s));
+            project.addLoadedHash(new LoadedHash(s));
             updateLoadedHashesListView();
         }
     }
@@ -287,9 +242,9 @@ public class MainController implements Initializable {
     // function called if we want to update list view
     private void updateLoadedHashesListView(){
         lvLoadedHashes.getItems().clear();
-        lvLoadedHashes.getItems().addAll(loadedHashes);
+        lvLoadedHashes.getItems().addAll(project.getLoadedHashes());
 
-        String out = String.format("Hashes loaded: %,d", loadedHashes.size());
+        String out = String.format("Hashes loaded: %,d", project.getLoadedHashes().size());
         lHashfileSize.setText(out);
     }
 
@@ -306,17 +261,17 @@ public class MainController implements Initializable {
 
         counterOfAnalyzedHashes = 0;
 
-        analyzedHashes.clear();
+        project.setAnalyzedHashes(new HashMap<>());
         twAnalyzedHashes.getItems().clear();
 
-        for(LoadedHash lh: loadedHashes){
+        for(LoadedHash lh: project.getLoadedHashes()){
 
             String hexString = lh.getHexString();
             String algorithm = Tools.distinguishHash(hexString);
 
             AnalyzedHash ah = new AnalyzedHash(hexString,algorithm);
 
-            analyzedHashes.put(hexString,ah);
+            project.addAnalyzedHash(hexString,ah);
 
             counterOfAnalyzedHashes++;
         }
@@ -325,9 +280,9 @@ public class MainController implements Initializable {
 
     private void updateAnalyzedHashesTableView(){
         twAnalyzedHashes.getItems().clear();
-        twAnalyzedHashes.getItems().addAll(analyzedHashes.values());
+        twAnalyzedHashes.getItems().addAll(project.getAnalyzedHashes().values());
 
-        String out = String.format("Hashes analyzed: %,d", counterOfAnalyzedHashes);
+        String out = String.format("Hashes analyzed: %,d", project.getAnalyzedHashes().size());
         lAnalyzedHashesSize.setText(out);
     }
 
@@ -434,6 +389,9 @@ public class MainController implements Initializable {
 
     /////////////////////////////////////////////RESULTS TAB////////////////////////////////////////////////////////////
 
+    @FXML private Tab tabLoadHashes;
+    @FXML private Tab tabAnalyzeHashes;
+    @FXML private Tab tabSettings;
     @FXML private Button btnStartCracking;
     @FXML private Button btnStopCracking;
     @FXML private Label labelProgress;
@@ -445,8 +403,15 @@ public class MainController implements Initializable {
     @FXML private TableColumn<CrackedHash, String> tcCrackedHash;
 
     @FXML private void startCracking() {
-        btnStartCracking.setDisable(true);
         btnStopCracking.setDisable(false);
+
+        btnStartCracking.setDisable(true);
+
+        tabAnalyzeHashes.setDisable(true);
+        tabLoadHashes.setDisable(true);
+        tabSettings.setDisable(true);
+        cbAttackAlgorithm.setDisable(true);
+
         isCracking = true;
 
         tvCrackedHashes.getItems().clear();
@@ -465,8 +430,15 @@ public class MainController implements Initializable {
     }
 
     @FXML private void stopCracking() {
-        btnStartCracking.setDisable(false);
         btnStopCracking.setDisable(true);
+
+        btnStartCracking.setDisable(false);
+
+        tabAnalyzeHashes.setDisable(false);
+        tabLoadHashes.setDisable(false);
+        tabSettings.setDisable(false);
+        cbAttackAlgorithm.setDisable(false);
+
         isCracking = false;
     }
 
@@ -483,7 +455,7 @@ public class MainController implements Initializable {
 
         try {
             tvCrackedHashes.getItems().clear();
-            tvCrackedHashes.getItems().addAll(crackedHashes);
+            tvCrackedHashes.getItems().addAll(project.getCrackedHashes());
         }catch (ConcurrentModificationException e){
             //ignorujeme :]
         }
@@ -516,8 +488,8 @@ public class MainController implements Initializable {
 
                         String hexString = Tools.hash(password, attackAlgorithm);
 
-                        if(analyzedHashes.containsKey(hexString))
-                            crackedHashes.add(new CrackedHash(hexString,password));
+                        if(project.getAnalyzedHashes().containsKey(hexString))
+                            project.addCrackedHash(new CrackedHash(hexString,password));
 
                         counter++;
                         if(counter%1000==0) Platform.runLater(() -> {
@@ -591,10 +563,10 @@ public class MainController implements Initializable {
 
                         String[] array = line.trim().split(":");
 
-                        if (analyzedHashes.containsKey(array[0])) {
+                        if (project.getAnalyzedHashes().containsKey(array[0])) {
                             CrackedHash ch = new CrackedHash(array[0], array[1]);
 
-                            crackedHashes.add(ch);
+                            project.addCrackedHash(ch);
 
                             Platform.runLater(() -> tvCrackedHashes.getItems().add(ch));
                         }

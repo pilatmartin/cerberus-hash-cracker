@@ -51,7 +51,7 @@
    <center>
       <TabPane prefHeight="500.0" prefWidth="900.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
-          <Tab text="Load Hashes">
+          <Tab fx:id="tabLoadHashes" text="Load Hashes">
                <content>
                   <AnchorPane>
                      <children>
@@ -65,7 +65,7 @@
                   </AnchorPane>
                </content>
           </Tab>
-            <Tab text="Analyze Hashes">
+            <Tab fx:id="tabAnalyzeHashes" text="Analyze Hashes">
                <content>
                   <AnchorPane>
                      <children>
@@ -81,7 +81,7 @@
                   </AnchorPane>
                </content>
             </Tab>
-          <Tab text="Settings">
+          <Tab fx:id="tabSettings" text="Settings">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>

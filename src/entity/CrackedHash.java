@@ -1,6 +1,8 @@
 package entity;
 
-public class CrackedHash extends LoadedHash {
+import java.io.Serializable;
+
+public class CrackedHash extends LoadedHash implements Serializable {
 
     private String password;
 

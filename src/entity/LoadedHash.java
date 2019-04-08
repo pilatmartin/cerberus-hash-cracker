@@ -1,8 +1,9 @@
 package entity;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class LoadedHash {
+public class LoadedHash implements Serializable {
 
     private String hexString;
 

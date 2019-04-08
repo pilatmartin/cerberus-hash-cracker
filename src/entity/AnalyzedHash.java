@@ -1,6 +1,8 @@
 package entity;
 
-public class AnalyzedHash extends LoadedHash {
+import java.io.Serializable;
+
+public class AnalyzedHash extends LoadedHash implements Serializable {
 
     private String algorithm;
 
