@@ -506,7 +506,6 @@ public class MainController implements Initializable {
 
     //////////////////////////////////////////////////BRUTEFORCE////////////////////////////////////////////////////////
 
-
     private void startCrackWithBruteforce(){
 
         /*
@@ -522,7 +521,6 @@ public class MainController implements Initializable {
             generate("", 0, length);
         }
         */
-    }
 
     /*
     private void generate(String str, int pos, int length) {
@@ -541,6 +539,8 @@ public class MainController implements Initializable {
         }
     }
     */
+
+    }
 
     //////////////////////////////////////////////////RAINBOW TABLE/////////////////////////////////////////////////////
 
@@ -587,4 +587,7 @@ public class MainController implements Initializable {
         }
         */
     }
+
+    ///////////////////////////////////////////////END OF RAINBOW RABLE/////////////////////////////////////////////////
+
 }
