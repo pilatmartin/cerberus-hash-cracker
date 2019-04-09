@@ -57,13 +57,13 @@ public class RainbowTableGeneratorController implements Initializable {
                 BufferedReader br = new BufferedReader(new FileReader(passwordFilePath));
                 BufferedWriter bw = new BufferedWriter(new FileWriter(outputFilePath));
 
-                String algorithm = cbAlgorithm.getValue().toString();
-                //bw.write(algorithm+"\n");
+                String algorithm = cbAlgorithm.getValue();
 
                 counter = 0;
                 String password;
                 while ((password = br.readLine()) != null) {
-                    String hexString = Tools.hash(password, algorithm);
+                    byte[] byteArray = Tools.hash(password, algorithm);
+                    String hexString = Tools.byteArrayToString(byteArray);
                     if(hexString.equals("d41d8cd98f00b204e9800998ecf8427e")) continue;
                     bw.write(hexString+":"+password+"\n");
 

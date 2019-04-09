@@ -19,7 +19,9 @@ public class HasherController implements Initializable {
     @FXML private void hash(){
         String password = tfPassword.getText();
 
-        String hexString = Tools.hash(password,cbHashAlgorithm.getValue().toString());
+        byte[] byteArray = Tools.hash(password,cbHashAlgorithm.getValue().toString());
+
+        String hexString = Tools.byteArrayToString(byteArray);
 
         tfHash.setText(hexString);
     }

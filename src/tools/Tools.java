@@ -19,6 +19,20 @@ public class Tools {
         alert.show();
     }
 
+    public static byte[] hash(String password, String algorithm){
+        try {
+            byte[] inputBytes = Tools.stringToByteArray(password);
+
+            MessageDigest digest = MessageDigest.getInstance(algorithm);
+
+            return digest.digest(inputBytes);
+
+        }catch (NoSuchAlgorithmException e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static long countLines(File filename){
         InputStream is = null;
         try {
@@ -54,20 +68,18 @@ public class Tools {
         }
     }
 
-    public static String hash(String password, String algorithm){
-        try {
-            byte[] inputBytes = Tools.stringToByteArray(password);
+    public static byte[] stringToByteArray(String string){
+        return string.getBytes();
+    }
 
-            MessageDigest digest = MessageDigest.getInstance(algorithm);
-
-            byte[] byteArray = digest.digest(inputBytes);
-
-            return Tools.byteArrayToString(byteArray);
-
-        }catch (NoSuchAlgorithmException e){
-            e.printStackTrace();
-            return null;
+    public static byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                    + Character.digit(s.charAt(i+1), 16));
         }
+        return data;
     }
 
     public static String byteArrayToString(byte[] byteArray){
@@ -76,10 +88,6 @@ public class Tools {
             sb.append(String.format("%02x", b));
 
         return sb.toString();
-    }
-
-    public static byte[] stringToByteArray(String string){
-        return string.getBytes();
     }
 
     public static String distinguishHash(String hash) {

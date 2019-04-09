@@ -9,7 +9,7 @@ import java.util.Set;
 public class Project implements Serializable {
 
     private Set<LoadedHash> loadedHashes = new HashSet<>();
-    private Map<String,AnalyzedHash> analyzedHashes = new HashMap<>();
+    private Map<ByteArray,AnalyzedHash> analyzedHashes = new HashMap<>();
     private Set<CrackedHash> crackedHashes = new HashSet<>();
 
     public Project(){ }
@@ -24,13 +24,13 @@ public class Project implements Serializable {
         this.loadedHashes.add(loadedHash);
     }
 
-    public Map<String, AnalyzedHash> getAnalyzedHashes() {
+    public Map<ByteArray, AnalyzedHash> getAnalyzedHashes() {
         return analyzedHashes;
     }
-    public void setAnalyzedHashes(Map<String, AnalyzedHash> analyzedHashes) {
+    public void setAnalyzedHashes(Map<ByteArray, AnalyzedHash> analyzedHashes) {
         this.analyzedHashes = analyzedHashes;
     }
-    public void addAnalyzedHash(String key, AnalyzedHash analyzedHash) {
+    public void addAnalyzedHash(ByteArray key, AnalyzedHash analyzedHash) {
         this.analyzedHashes.put(key, analyzedHash);
     }
 

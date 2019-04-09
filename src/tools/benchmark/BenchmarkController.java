@@ -44,7 +44,7 @@ public class BenchmarkController implements Initializable {
 
         isBenchmarking = true;
 
-        Map<String,CrackedHash> testMap = new HashMap<>();
+        Map<byte[],CrackedHash> testMap = new HashMap<>();
 
         oneThreadCounter = 0;
         Thread thread = new Thread(() -> {
@@ -58,7 +58,7 @@ public class BenchmarkController implements Initializable {
                 if (startTime + 10000 < currentTimeMillis) stopBenchmark();
                 if (!isBenchmarking) break;
 
-                String hexString = Tools.hash("benchmark", attackAlgorithm);
+                byte[] hexString = Tools.hash("benchmark", attackAlgorithm);
 
                 if (testMap.containsKey(hexString));
 

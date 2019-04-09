@@ -1,9 +1,6 @@
 package main;
 
-import entity.AnalyzedHash;
-import entity.CrackedHash;
-import entity.LoadedHash;
-import entity.Project;
+import entity.*;
 import tools.Tools;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -16,7 +13,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import javax.tools.Tool;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -255,25 +251,23 @@ public class MainController implements Initializable {
     @FXML private TableColumn<AnalyzedHash,String> tcAlgorithm;
     @FXML private TableColumn<AnalyzedHash,String> tcHash;
 
-    private static long counterOfAnalyzedHashes = 0;
-
     @FXML private void btnAnalyzeLoadedHashes(){
-
-        counterOfAnalyzedHashes = 0;
 
         project.setAnalyzedHashes(new HashMap<>());
         twAnalyzedHashes.getItems().clear();
 
         for(LoadedHash lh: project.getLoadedHashes()){
 
+            byte[] key = Tools.hexStringToByteArray(lh.getHexString());
+
+            ByteArray byteArray = new ByteArray(key);
+
             String hexString = lh.getHexString();
             String algorithm = Tools.distinguishHash(hexString);
 
             AnalyzedHash ah = new AnalyzedHash(hexString,algorithm);
 
-            project.addAnalyzedHash(hexString,ah);
-
-            counterOfAnalyzedHashes++;
+            project.addAnalyzedHash(byteArray,ah);
         }
         updateAnalyzedHashesTableView();
     }
@@ -486,13 +480,17 @@ public class MainController implements Initializable {
                         if(counter>sizeWordlist) stopCracking();
                         if(!isCracking) break;
 
-                        String hexString = Tools.hash(password, attackAlgorithm);
+                        ByteArray hashedBytes = new ByteArray(Tools.hash(password, attackAlgorithm));
 
-                        if(project.getAnalyzedHashes().containsKey(hexString))
-                            project.addCrackedHash(new CrackedHash(hexString,password));
+                        if(project.getAnalyzedHashes().containsKey(hashedBytes)) {
+                            String hexString = project.getAnalyzedHashes().get(hashedBytes).getHexString();
+                            CrackedHash ch = new CrackedHash(hexString, password);
+                            project.addCrackedHash(ch);
+                        }
 
                         counter++;
-                        if(counter%1000==0) Platform.runLater(() -> {
+                        if(counter%10000==0)
+                            Platform.runLater(() -> {
                                 updateProgressBar(counter, sizeWordlist);
                                 updateCrackedHashesTableView();
                             });
@@ -508,8 +506,10 @@ public class MainController implements Initializable {
 
     //////////////////////////////////////////////////BRUTEFORCE////////////////////////////////////////////////////////
 
+
     private void startCrackWithBruteforce(){
 
+        /*
         charset = textFieldCharset.getText().toCharArray();
         minLength = Integer.parseInt(textFieldMinLength.getText());
         maxLength = Integer.parseInt(textFieldMaxLength.getText());
@@ -521,8 +521,10 @@ public class MainController implements Initializable {
         for (int length = minLength;  length <= maxLength; length++) {
             generate("", 0, length);
         }
+        */
     }
 
+    /*
     private void generate(String str, int pos, int length) {
         if (length == 0) {
             System.out.println(str);
@@ -538,11 +540,12 @@ public class MainController implements Initializable {
             }
         }
     }
+    */
 
     //////////////////////////////////////////////////RAINBOW TABLE/////////////////////////////////////////////////////
 
     private void startCrackWithRainbowTable(){
-
+        /*
         counter = 0;
         Thread[] threads = new Thread[threadsCount];
 
@@ -582,5 +585,6 @@ public class MainController implements Initializable {
 
             threads[i].start();
         }
+        */
     }
 }
