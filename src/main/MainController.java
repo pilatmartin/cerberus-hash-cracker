@@ -1,6 +1,7 @@
 package main;
 
 import entity.*;
+import tools.Generator;
 import tools.Tools;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -26,11 +27,31 @@ public class MainController implements Initializable {
 
     private Project project = new Project();
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    public boolean isCracking() {
+        return isCracking;
+    }
 
-        // print on console if we are using full version of cerberus
-        Platform.runLater(() -> System.out.println("isFullEdition = "+isFullEdition));
+    public void setCracking(boolean cracking) {
+        isCracking = cracking;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    public long getCounter() {
+        return counter;
+    }
+
+    public void setCounter(long counter) {
+        this.counter = counter;
+    }
+
+    @Override public void initialize(URL url, ResourceBundle resourceBundle) {
 
         // initialize table columns for 'analyze hashes' tab
         tcAlgorithm.setCellValueFactory(new PropertyValueFactory<>("algorithm"));
@@ -173,7 +194,6 @@ public class MainController implements Initializable {
     @FXML private ListView<LoadedHash> lvLoadedHashes = new ListView<>();
     @FXML private TextField tfAddHash;
 
-    // stlacenie tlacitka 'select hash file'
     @FXML private void btnSelectHashFile() {
         FileChooser fc = new FileChooser();
         File file = fc.showOpenDialog(null);
@@ -205,13 +225,11 @@ public class MainController implements Initializable {
         thread.start();
     }
 
-    // stlacenie tlacitka 'clear hashes'
     @FXML private void btnClearHashes() {
         project.setLoadedHashes(new HashSet<>());
         updateLoadedHashesListView();
     }
 
-    // stlacenie tlacitka 'add hashes'
     @FXML private void btnAddHash() {
         String s = tfAddHash.getText();
         tfAddHash.clear();
@@ -228,6 +246,9 @@ public class MainController implements Initializable {
                     Tools.openInfoWindow(title, text);
                 });
                 tfAddHash.setPromptText("Community version supports maximum of 10 hashes");
+            }else{
+                project.addLoadedHash(new LoadedHash(s));
+                updateLoadedHashesListView();
             }
         }else{
             project.addLoadedHash(new LoadedHash(s));
@@ -235,7 +256,6 @@ public class MainController implements Initializable {
         }
     }
 
-    // function called if we want to update list view
     private void updateLoadedHashesListView(){
         lvLoadedHashes.getItems().clear();
         lvLoadedHashes.getItems().addAll(project.getLoadedHashes());
@@ -306,17 +326,14 @@ public class MainController implements Initializable {
     private long counter = 0;
     private byte threadsCount = 4;
 
-    //wordlist cracking variables
     private File wordlist = null;
     private long sizeWordlist = 0;
 
-    //bruteforce cracking variables
     private long sizeBruteforcer;
     private char[] charset;
     private int minLength;
     private int maxLength;
 
-    //rainbow table cracking variables
     private File rainbowTable = null;
     private long sizeRainbowtable = 0;
 
@@ -328,10 +345,13 @@ public class MainController implements Initializable {
 
         if(wordlist){
             crackType = 0;
+            cbAttackAlgorithm.setDisable(false);
         }else if(bruteforce){
             crackType = 1;
+            cbAttackAlgorithm.setDisable(false);
         }else if(rainbowtable){
             crackType = 2;
+            cbAttackAlgorithm.setDisable(true);
         }
 
         buttonSelectWordlist.setDisable(!wordlist);
@@ -436,7 +456,7 @@ public class MainController implements Initializable {
         isCracking = false;
     }
 
-    private void updateProgressBar(long current, long max) {
+    public void updateProgressBar(long current, long max) {
 
         String out = String.format("%,d / %,d", current,max);
         labelProgress.setText(out);
@@ -445,7 +465,7 @@ public class MainController implements Initializable {
         progressBar.setProgress( progress );
     }
 
-    private void updateCrackedHashesTableView() {
+    public void updateCrackedHashesTableView() {
 
         try {
             tvCrackedHashes.getItems().clear();
@@ -508,44 +528,34 @@ public class MainController implements Initializable {
 
     private void startCrackWithBruteforce(){
 
-        /*
-        charset = textFieldCharset.getText().toCharArray();
+
+
+        String charset = textFieldCharset.getText();
         minLength = Integer.parseInt(textFieldMinLength.getText());
         maxLength = Integer.parseInt(textFieldMaxLength.getText());
 
         counter = 0;
-
-        sizeBruteforcer = (int) Math.pow(charset.length, maxLength);
-
-        for (int length = minLength;  length <= maxLength; length++) {
-            generate("", 0, length);
+        sizeBruteforcer=0;
+        for (int i = minLength; i < maxLength+1; i++) {
+            sizeBruteforcer+=Math.pow(charset.length(),i);
         }
-        */
 
-    /*
-    private void generate(String str, int pos, int length) {
-        if (length == 0) {
-            System.out.println(str);
-            counter++;
-            System.out.println(counter);
-            if(counter%1000==0) updateProgressBar(counter, sizeBruteforcer);
-        } else {
-            if (pos != 0) {
-                pos = 0;
-            }
-            for (int i = pos; i < charset.length; i++) {
-                generate(str + charset[i], i, length - 1);
-            }
-        }
-    }
-    */
+        final String attackAlgorithm = cbAttackAlgorithm.getValue();
 
+        Generator gen = new Generator(this, charset, attackAlgorithm, sizeBruteforcer);
+            Thread thread=new Thread(()->{
+                for (int length = minLength;  length <= maxLength; length++) {
+                    gen.generate("",0,length);
+                }
+                stopCracking();
+            });
+            thread.start();
     }
 
     //////////////////////////////////////////////////RAINBOW TABLE/////////////////////////////////////////////////////
 
     private void startCrackWithRainbowTable(){
-        /*
+
         counter = 0;
         Thread[] threads = new Thread[threadsCount];
 
@@ -566,7 +576,9 @@ public class MainController implements Initializable {
 
                         String[] array = line.trim().split(":");
 
-                        if (project.getAnalyzedHashes().containsKey(array[0])) {
+                        ByteArray ba = new ByteArray(Tools.hexStringToByteArray(array[0]));
+
+                        if (project.getAnalyzedHashes().containsKey(ba)) {
                             CrackedHash ch = new CrackedHash(array[0], array[1]);
 
                             project.addCrackedHash(ch);
@@ -585,7 +597,7 @@ public class MainController implements Initializable {
 
             threads[i].start();
         }
-        */
+
     }
 
     ///////////////////////////////////////////////END OF RAINBOW RABLE/////////////////////////////////////////////////

@@ -3,6 +3,7 @@ package entity;
 import java.io.Serializable;
 import java.util.Objects;
 
+// loaded hash just need to know hexString
 public class LoadedHash implements Serializable {
 
     private String hexString;
@@ -18,21 +19,20 @@ public class LoadedHash implements Serializable {
         this.hexString = hexString;
     }
 
-    @Override
-    public String toString() {
+    // toString returns hexString now
+    @Override public String toString() {
         return hexString;
     }
 
-    @Override
-    public boolean equals(Object o) {
+    // we need to override equals and hashcode functions so we can compare hashes
+    @Override public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LoadedHash hash = (LoadedHash) o;
         return Objects.equals(hexString, hash.hexString);
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         return Objects.hash(hexString);
     }
 }

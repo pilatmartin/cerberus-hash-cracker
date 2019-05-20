@@ -16,8 +16,8 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <TextField fx:id="keyField" onAction="#btnActivate" alignment="CENTER" layoutX="23.0" layoutY="74.0" prefHeight="26.0" prefWidth="255.0" promptText="XXXX-XXXX-XXXX-XXXX" />
-            <Label fx:id="keyStatus" alignment="CENTER" layoutX="42.0" layoutY="118.0" prefHeight="18.0" prefWidth="219.0" textFill="RED">
+            <TextField fx:id="tfKeyField" onAction="#btnActivate" alignment="CENTER" layoutX="23.0" layoutY="74.0" prefHeight="26.0" prefWidth="255.0" promptText="XXXX-XXXX-XXXX-XXXX" />
+            <Label fx:id="lKeyStatus" alignment="CENTER" layoutX="42.0" layoutY="118.0" prefHeight="18.0" prefWidth="219.0" textFill="RED">
                <font>
                   <Font size="14.0" />
                </font>

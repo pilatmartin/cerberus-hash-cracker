@@ -14,7 +14,7 @@ public class HasherController implements Initializable {
 
     @FXML TextField tfPassword;
     @FXML TextField tfHash;
-    @FXML ChoiceBox cbHashAlgorithm;
+    @FXML ChoiceBox<String> cbHashAlgorithm;
 
     @FXML private void hash(){
         String password = tfPassword.getText();
@@ -26,14 +26,9 @@ public class HasherController implements Initializable {
         tfHash.setText(hexString);
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        cbHashAlgorithm.getItems().add("MD5");
-        cbHashAlgorithm.getItems().add("SHA");
-        cbHashAlgorithm.getItems().add("SHA-224");
-        cbHashAlgorithm.getItems().add("SHA-256");
-        cbHashAlgorithm.getItems().add("SHA-384");
-        cbHashAlgorithm.getItems().add("SHA-512");
+    @Override public void initialize(URL url, ResourceBundle resourceBundle) {
+        String[] algorithms = {"MD5","SHA","SHA-224","SHA-256","SHA-384","SHA-512"};
+        cbHashAlgorithm.getItems().addAll(algorithms);
         cbHashAlgorithm.setValue(cbHashAlgorithm.getItems().get(0));
     }
 }

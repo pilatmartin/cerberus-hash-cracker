@@ -29,12 +29,8 @@ public class RainbowTableGeneratorController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        cbAlgorithm.getItems().add("MD5");
-        cbAlgorithm.getItems().add("SHA");
-        cbAlgorithm.getItems().add("SHA-224");
-        cbAlgorithm.getItems().add("SHA-256");
-        cbAlgorithm.getItems().add("SHA-384");
-        cbAlgorithm.getItems().add("SHA-512");
+        String[] algorithms = {"MD5","SHA","SHA-224","SHA-256","SHA-384","SHA-512"};
+        cbAlgorithm.getItems().addAll(algorithms);
         cbAlgorithm.setValue(cbAlgorithm.getItems().get(0));
     }
 
@@ -68,7 +64,7 @@ public class RainbowTableGeneratorController implements Initializable {
                     bw.write(hexString+":"+password+"\n");
 
                     counter++;
-                    Platform.runLater(() -> updateProgressBar());
+                    if(counter%1000==0)Platform.runLater(this::updateProgressBar);
                 }
                 br.close();
                 bw.close();
