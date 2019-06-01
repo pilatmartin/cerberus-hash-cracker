@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<fx:root prefHeight="332.0" prefWidth="600.0" type="AnchorPane" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="14.0" layoutY="14.0" prefHeight="17.0" prefWidth="136.0" text="Hasher">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label alignment="TOP_LEFT" layoutX="14.0" layoutY="41.0" prefHeight="49.0" prefWidth="247.0" text="Returns hash of the given string." wrapText="true" />
+      <Label layoutX="317.0" layoutY="14.0" prefHeight="17.0" prefWidth="136.0" text="Distinguisher">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label alignment="TOP_LEFT" layoutX="317.0" layoutY="41.0" prefHeight="49.0" prefWidth="234.0" text="Returns algorithm of the given hash." wrapText="true" />
+      <Line endX="-100.0" endY="-149.0" layoutX="400.0" layoutY="175.0" startX="-100.0" startY="131.0" />
+      <Label layoutX="14.0" layoutY="131.0" prefHeight="27.0" prefWidth="247.0" text="Rainbow Table Generator">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label alignment="TOP_LEFT" layoutX="14.0" layoutY="166.0" prefHeight="119.0" prefWidth="265.0" text="Generates rainbow table file from the chosen wordlist.&#10;&#10;Select input file and algorithm.&#10;" wrapText="true" />
+      <Label layoutX="317.0" layoutY="131.0" prefHeight="27.0" prefWidth="247.0" text="Benchmark">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label alignment="TOP_LEFT" layoutX="317.0" layoutY="166.0" prefHeight="78.0" prefWidth="265.0" text="Tests speed of your computer.&#10;&#10;Returns speed value in Hashes per Second&#10;" wrapText="true" />
+   </children>
+</fx:root>

@@ -144,7 +144,7 @@ public class ActivationController implements Initializable {
         }
 
         //if sum equals to our secret value key was good
-        if(sum == 1875){
+        if(sum == 1280){
 
             // save key to file, so user don't need to type product key every time
             writeKeyToFile(key);

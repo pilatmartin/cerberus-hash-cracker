@@ -51,6 +51,8 @@ public class MainController implements Initializable {
         this.counter = counter;
     }
 
+    public MenuItem howToItem, aboutItem;
+
     @Override public void initialize(URL url, ResourceBundle resourceBundle) {
 
         // initialize table columns for 'analyze hashes' tab
@@ -65,6 +67,21 @@ public class MainController implements Initializable {
         String[] algorithms = {"MD5","SHA","SHA-224","SHA-256","SHA-384","SHA-512"};
         cbAttackAlgorithm.getItems().addAll(algorithms);
         cbAttackAlgorithm.setValue(cbAttackAlgorithm.getItems().get(0));
+
+        howToItem.setOnAction(mouseEvent->{
+            try {
+                openHelpWindows("help/HowTo.fxml","How to");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        aboutItem.setOnAction(mouseEvent->{
+            try {
+                openHelpWindows("help/About.fxml","About");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     ////////////////////////////////////////////MENU////////////////////////////////////////////////////////////////////
@@ -601,5 +618,21 @@ public class MainController implements Initializable {
     }
 
     ///////////////////////////////////////////////END OF RAINBOW RABLE/////////////////////////////////////////////////
+
+    /////////////////////////////////////////////////OPEN HELP TABS/////////////////////////////////////////////////////
+
+    public void openHelpWindows(String path, String title) throws IOException {
+        Stage stage = new Stage();
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
+        Parent root = loader.load();
+
+        Scene scene = new Scene(root);
+
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.setTitle(title);
+        stage.show();
+    }
 
 }

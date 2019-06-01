@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.help.aboutController">
+   <children>
+      <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="396.0" prefWidth="597.0">
+         <children>
+            <Label layoutX="226.0" layoutY="14.0" prefHeight="62.0" prefWidth="145.0" text="ABOUT">
+               <font>
+                  <Font name="System Bold" size="42.0" />
+               </font>
+            </Label>
+            <Line endX="275.0" layoutX="299.0" layoutY="76.0" startX="-279.0" />
+            <Label layoutX="29.0" layoutY="91.0" prefHeight="30.0" prefWidth="104.0" text="CREATORS:">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="113.0" layoutY="121.0" prefHeight="17.0" prefWidth="353.0" text=" (Peter Melniček, Samuel Senderák, Tomáš Štucka)" />
+            <Label layoutX="29.0" layoutY="121.0" prefHeight="17.0" prefWidth="82.0" text="Godly Slamky">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="29.0" layoutY="168.0" prefHeight="30.0" prefWidth="129.0" text="DESCRIPTION:">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label alignment="TOP_LEFT" layoutX="29.0" layoutY="198.0" prefHeight="144.0" prefWidth="528.0" text="This is a school project.&#10;For more information head to the Help -&gt; How To tab in menu&#10;&#10;" wrapText="true" />
+            <Label layoutX="131.0" layoutY="358.0" prefHeight="32.0" prefWidth="27.0" text="© ">
+               <font>
+                  <Font name="System Bold" size="22.0" />
+               </font>
+            </Label>
+            <Label alignment="TOP_LEFT" layoutX="158.0" layoutY="361.0" prefHeight="26.0" prefWidth="282.0" text="Godly Slamky 2019 all rights reserved">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      <Label layoutX="236.0" layoutY="24.0" prefHeight="62.0" prefWidth="145.0" text="ABOUT">
+         <font>
+            <Font name="System Bold" size="42.0" />
+         </font>
+      </Label>
+      <Line endX="275.0" layoutX="309.0" layoutY="86.0" startX="-279.0" />
+      <Label layoutX="39.0" layoutY="101.0" prefHeight="30.0" prefWidth="104.0" text="CREATORS:">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label layoutX="123.0" layoutY="131.0" prefHeight="17.0" prefWidth="353.0" text=" (Peter Melniček, Samuel Senderák, Tomáš Štucka)" />
+      <Label layoutX="39.0" layoutY="131.0" prefHeight="17.0" prefWidth="82.0" text="Godly Slamky">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label layoutX="39.0" layoutY="178.0" prefHeight="30.0" prefWidth="129.0" text="DESCRIPTION:">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label alignment="TOP_LEFT" layoutX="39.0" layoutY="208.0" prefHeight="144.0" prefWidth="528.0" text="This is a school project.&#10;For more information head to the Help -&gt; How To tab in menu&#10;&#10;" wrapText="true" />
+      <Label layoutX="141.0" layoutY="368.0" prefHeight="32.0" prefWidth="27.0" text="© ">
+         <font>
+            <Font name="System Bold" size="22.0" />
+         </font>
+      </Label>
+      <Label alignment="TOP_LEFT" layoutX="168.0" layoutY="371.0" prefHeight="26.0" prefWidth="282.0" text="Godly Slamky 2019 all rights reserved">
+         <font>
+            <Font size="17.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>
