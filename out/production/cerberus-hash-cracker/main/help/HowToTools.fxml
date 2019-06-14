@@ -31,6 +31,6 @@
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
-      <Label alignment="TOP_LEFT" layoutX="317.0" layoutY="166.0" prefHeight="78.0" prefWidth="265.0" text="Tests speed of your computer.&#10;&#10;Returns speed value in Hashes per Second&#10;" wrapText="true" />
+      <Label alignment="TOP_LEFT" layoutX="317.0" layoutY="166.0" prefHeight="96.0" prefWidth="265.0" text="Tests speed of your computer.&#10;&#10;Returns speed value in Hashes per Second for single and four threads&#10;&#10;" wrapText="true" />
    </children>
 </fx:root>

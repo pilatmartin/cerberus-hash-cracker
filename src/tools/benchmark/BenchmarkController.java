@@ -31,8 +31,9 @@ public class BenchmarkController implements Initializable {
         cbAlgorithm.setValue(cbAlgorithm.getItems().get(0));
     }
 
-    static private long oneThreadCounter = 0;
+    static private long threadCounter = 0;
     static private boolean isBenchmarking = false;
+    static private Long[] threadArray = new Long[4];
 
     @FXML private void btnGenerate(){
 
@@ -43,35 +44,41 @@ public class BenchmarkController implements Initializable {
         Map<ByteArray, LoadedHash> testMap = new HashMap<>();
         testMap.put(new ByteArray(new byte[]{100,100}), new LoadedHash("00"));
 
-        oneThreadCounter = 0;
-        Thread thread = new Thread(() -> {
+        for (int i = 0 ; i < 4 ; i++){
+            threadCounter = i;
+            int position = i;
+            Thread thread = new Thread(() -> {
 
-            long startTime = System.currentTimeMillis();
+                long startTime = System.currentTimeMillis();
 
-            while(true) {
+                while(true) {
 
-                long currentTimeMillis = System.currentTimeMillis();
+                    long currentTimeMillis = System.currentTimeMillis();
 
-                if (startTime + 5000 < currentTimeMillis) stopBenchmark();
-                if (!isBenchmarking) break;
+                    if (startTime + 5000 < currentTimeMillis) stopBenchmark();
+                    if (!isBenchmarking) break;
 
-                ByteArray hexString = new ByteArray(Tools.hash("benchmark", attackAlgorithm));
+                    ByteArray hexString = new ByteArray(Tools.hash("benchmark", attackAlgorithm));
 
-                if (testMap.containsKey(hexString));
+                    if (testMap.containsKey(hexString));
 
-                oneThreadCounter++;
-                if (oneThreadCounter % 1000 == 0) Platform.runLater(() -> {
-                    updateProgressBar(currentTimeMillis-startTime, 5000);
-                });
-            }
-
-            String out = String.format("One thread %,d H/s", oneThreadCounter/5);
-            tOneThread.setText(out);
-            out = String.format("Four threads: %,d H/s", (oneThreadCounter/5)*4);
-            tFourThread.setText(out);
-        });
-        thread.start();
+                    threadCounter++;
+                    if (threadCounter % 1000 == 0) Platform.runLater(() -> {
+                        updateProgressBar(currentTimeMillis-startTime, 5000);
+                    });
+                }
+                threadArray[position] = threadCounter/5;
+                String out = String.format("One thread %,d H/s", threadArray[0]);
+                tOneThread.setText(out);
+                if (position == 3){
+                    out = String.format("Four threads: %,d H/s", threadArray[0] + threadArray[1] + threadArray[2] + threadArray[3]);
+                    tFourThread.setText(out);
+                }
+            });
+            thread.start();
+        }
     }
+
 
     private void stopBenchmark(){
         isBenchmarking = false;

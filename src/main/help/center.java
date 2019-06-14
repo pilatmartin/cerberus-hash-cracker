@@ -14,10 +14,7 @@ public class center extends AnchorPane {
 
         try {
             fxmlLoader.load();
-            System.out.println(fxmlLoader);
-        } catch (IOException e) {
-            System.out.println("to nic heh");
-        }
+        } catch (IOException e) {}
     }
 
 }

@@ -621,7 +621,7 @@ public class MainController implements Initializable {
 
     /////////////////////////////////////////////////OPEN HELP TABS/////////////////////////////////////////////////////
 
-    public void openHelpWindows(String path, String title) throws IOException {
+    private void openHelpWindows(String path, String title) throws IOException {
         Stage stage = new Stage();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
