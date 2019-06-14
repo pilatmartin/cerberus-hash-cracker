@@ -1,7 +1,6 @@
 package tools.benchmark;
 
 import entity.ByteArray;
-import entity.CrackedHash;
 import entity.LoadedHash;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -33,21 +32,29 @@ public class BenchmarkController implements Initializable {
 
     static private long threadCounter = 0;
     static private boolean isBenchmarking = false;
-    static private Long[] threadArray = new Long[4];
+
+    private byte threadsCount = 4;
 
     @FXML private void btnGenerate(){
 
         final String attackAlgorithm = cbAlgorithm.getValue();
+
+
+        Long[] threadArray = new Long[4];
+        Thread[] threads = new Thread[threadsCount];
+
 
         isBenchmarking =  !isBenchmarking;
 
         Map<ByteArray, LoadedHash> testMap = new HashMap<>();
         testMap.put(new ByteArray(new byte[]{100,100}), new LoadedHash("00"));
 
-        for (int i = 0 ; i < 4 ; i++){
-            threadCounter = i;
-            int position = i;
-            Thread thread = new Thread(() -> {
+
+        for (int i = 0; i < threads.length; i++) {
+
+            int finalI = i;
+
+            threads[i] = new Thread(() -> {
 
                 long startTime = System.currentTimeMillis();
 
@@ -67,16 +74,17 @@ public class BenchmarkController implements Initializable {
                         updateProgressBar(currentTimeMillis-startTime, 5000);
                     });
                 }
-                threadArray[position] = threadCounter/5;
+                threadArray[finalI] = threadCounter/5;
+
                 String out = String.format("One thread %,d H/s", threadArray[0]);
                 tOneThread.setText(out);
-                if (position == 3){
-                    out = String.format("Four threads: %,d H/s", threadArray[0] + threadArray[1] + threadArray[2] + threadArray[3]);
-                    tFourThread.setText(out);
-                }
+                out = String.format("Four threads: %,d H/s", threadArray[0] + threadArray[1] + threadArray[2] + threadArray[3]);
+                tFourThread.setText(out);
             });
-            thread.start();
+            threads[i].start();
         }
+        threadCounter=0;
+
     }
 
 

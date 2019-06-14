@@ -24,11 +24,9 @@ public class howToController implements Initializable {
 
         mainBtn.setOnAction(mouseEvent->{
             borderPane.setCenter(mainCenter);
-            System.out.println("main click");
         });
         toolsBtn.setOnAction(mouseEvent->{
             borderPane.setCenter(toolsCenter);
-            System.out.println("tools click");
         });
 
     }
